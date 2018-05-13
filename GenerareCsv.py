@@ -1,20 +1,24 @@
 import csv
 
-text = open("Text.txt", "r")
+from cuvintePrescurtate import wordTreeLetters, wordTwoLetters
+from strings import is_lower
+
+try:
+    text = open("Text.txt", "r")
+except ValueError:
+    print ValueError
 
 text = text.read()
-
 nrDots = 0
-
 dotList = []
 
 for singleTuple in enumerate(text):
     if singleTuple[1] == ".":
         dotList.append(singleTuple[0])
-nrDots = len(dotList)
-print(nrDots)
-spaceListIndex = []
 
+nrDots = len(dotList)
+
+spaceListIndex = []
 wordBeforePoint = []
 wordAfterPoint = []
 auxiliarString = ""
@@ -50,6 +54,9 @@ for index in dotList:
                     word = word + character
                     checkNextLetter = True
 
+if wordAfterPoint[-1] != "\n":
+    wordAfterPoint.append(" ")
+
 urmEnter = []
 for letter in wordAfterPoint:
     if letter[0] == "\n":
@@ -57,23 +64,74 @@ for letter in wordAfterPoint:
     else:
         urmEnter.append("F")
 
-precPresc = []
 inAbr = []
+
 for word in wordBeforePoint:
-    if word[0].isupper and (word[1] == "." or word[1] == " "):
+    if word[0].isupper and word[1] == ".":
         inAbr.append("T")
     else:
         inAbr.append("F")
 
+precPresc = []
+
+for word in wordBeforePoint:
+    word = word[:-1]
+    if is_lower(word) and word.isalpha():
+        if len(word) == 2:
+            if word in wordTwoLetters:
+                precPresc.append("F")
+            else:
+                precPresc.append("T")
+        elif len(word) == 3:
+            if word in wordTreeLetters:
+                precPresc.append("F")
+            else:
+                precPresc.append("T")
+        else:
+            precPresc.append("F")
+
+    else:
+        precPresc.append("F")
+
+print("Introduceti numarul corespunzator punctului aflat la final de proprozitie, dupa ce termianti inserati 0 ")
+endPoints = []
+auxiliara = 1
+
+while auxiliara != 0:
+    inputData = input("Numar punct final de propozitie: ")
+    if inputData == 0:
+        auxiliara = 0
+    else:
+        endPoints.append(inputData)
+
+classList = []
+for index in range(0, nrDots):
+    classList.append("F")
+
+for index in enumerate(endPoints):
+    classList[index[1] - 1] = "T"
+
+# ------------------------------ Verificare + Redactare CSV ------------------------------
+
+print "Class "
+print classList
+
+print "Prec presc"
+print precPresc
+
+print "In ABR "
 print inAbr
+
+print "urm enter"
 print urmEnter
+
 print wordBeforePoint
 print wordAfterPoint
 
 with open('data.csv', 'wb') as csvfile:
-    fieldnames = ['inAbr', 'urmEnter']
+    fieldnames = ['inAbr', 'urmEnter', "precPresc", "class"]
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     for index in range(0, nrDots):
-        writer.writerow({'inAbr': inAbr[index], 'urmEnter': urmEnter[index]})
-
+        writer.writerow({'urmEnter': urmEnter[index], 'precPresc': precPresc[index], 'inAbr': inAbr[index],
+                         "class": classList[index]})

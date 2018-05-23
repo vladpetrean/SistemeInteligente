@@ -2,11 +2,16 @@ import csv
 
 from cuvintePrescurtate import wordTreeLetters, wordTwoLetters
 from strings import is_lower
+from PrenumeRomanesti import obtainPrenume
+from NumeRomanesti import obtainNume
 
 try:
     text = open("Text.txt", "r")
 except ValueError:
     print ValueError
+
+listaPrenume = obtainPrenume()
+listaNume = obtainNume()
 
 text = text.read()
 nrDots = 0
@@ -18,6 +23,7 @@ for singleTuple in enumerate(text):
 
 nrDots = len(dotList)
 
+entireWordAfterPoint = []
 spaceListIndex = []
 wordBeforePoint = []
 wordAfterPoint = []
@@ -53,7 +59,29 @@ for index in dotList:
                 else:
                     word = word + character
                     checkNextLetter = True
+            checkWord = 0
+            for character in text[index + 1:]:
 
+                if checkWord == 2:
+                    entireWordAfterPoint.append(word[:-1])
+                    word = ""
+                    break
+                if character != " " and character != "\n":
+                    word = word + character
+                else:
+                    word = word + character
+                    checkWord = checkWord + 1
+
+entireWordAfterPointAux = []
+
+for word in entireWordAfterPoint:
+    if word.endswith('.'):
+        word = word[:-1]
+        entireWordAfterPointAux.append(word)
+    else:
+        entireWordAfterPointAux.append(word)
+
+entireWordAfterPoint = entireWordAfterPointAux
 if wordAfterPoint[-1] != "\n":
     wordAfterPoint.append(" ")
 
@@ -111,7 +139,11 @@ for index in range(0, nrDots):
 for index in enumerate(endPoints):
     classList[index[1] - 1] = "T"
 
+urmSpUpCharNoName = []
+
 # ------------------------------ Verificare + Redactare CSV ------------------------------
+
+print "UrmSpUpCharNoName"
 
 print "Class "
 print classList
@@ -125,8 +157,11 @@ print inAbr
 print "urm enter"
 print urmEnter
 
+print"Word Before point"
 print wordBeforePoint
-print wordAfterPoint
+
+print"Word After point"
+print entireWordAfterPoint
 
 with open('data.csv', 'wb') as csvfile:
     fieldnames = ['inAbr', 'urmEnter', "precPresc", "class"]

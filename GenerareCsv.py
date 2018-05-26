@@ -92,14 +92,6 @@ for letter in wordAfterPoint:
     else:
         urmEnter.append("F")
 
-inAbr = []
-
-for word in wordBeforePoint:
-    if word[0].isupper and word[1] == ".":
-        inAbr.append("T")
-    else:
-        inAbr.append("F")
-
 precPresc = []
 
 for word in wordBeforePoint:
@@ -141,6 +133,44 @@ for index in enumerate(endPoints):
 
 urmSpUpCharNoName = []
 
+for word in entireWordAfterPoint:
+    if word[0] == " ":
+        if word[1].isupper():
+            auxWord = word[1:]
+            if auxWord not in listaNume and auxWord not in listaPrenume and len(auxWord) != 1:
+                urmSpUpCharNoName.append("T")
+
+            else:
+                urmSpUpCharNoName.append("F")
+        else:
+            urmSpUpCharNoName.append("F")
+
+    else:
+        urmSpUpCharNoName.append("F")
+
+singleLetterBeforePoint = []
+
+for key, value in enumerate(urmSpUpCharNoName):
+    if value == "T":
+        if len(wordBeforePoint[key]) == 2:
+            singleLetterBeforePoint.append("T")
+        else:
+            singleLetterBeforePoint.append("F")
+    else:
+        singleLetterBeforePoint.append("F")
+
+inAbr = []
+
+for key, word in enumerate(wordBeforePoint):
+    if word[0].isupper() and word[1] == ".":
+        if singleLetterBeforePoint[key] == "F":
+            inAbr.append("T")
+        else:
+            inAbr.append("F")
+
+    else:
+        inAbr.append("F")
+
 # ------------------------------ Verificare + Redactare CSV ------------------------------
 
 print "UrmSpUpCharNoName"
@@ -163,10 +193,18 @@ print wordBeforePoint
 print"Word After point"
 print entireWordAfterPoint
 
+print"Urm Sp Up Char No Name"
+print urmSpUpCharNoName
+
+print"Single Letter Before Point"
+print singleLetterBeforePoint
+
 with open('data.csv', 'wb') as csvfile:
-    fieldnames = ['inAbr', 'urmEnter', "precPresc", "class"]
+    fieldnames = ['inAbr', 'urmEnter', "precPresc", "urmSpUpCharNoName", "singleLetterBeforePoint", "class"]
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     for index in range(0, nrDots):
         writer.writerow({'urmEnter': urmEnter[index], 'precPresc': precPresc[index], 'inAbr': inAbr[index],
+                         "urmSpUpCharNoName": urmSpUpCharNoName[index],
+                         "singleLetterBeforePoint": singleLetterBeforePoint[index],
                          "class": classList[index]})

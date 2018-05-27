@@ -161,6 +161,7 @@ for key, value in enumerate(urmSpUpCharNoName):
 
 inAbr = []
 
+betweenTwoNrs = []
 for key, word in enumerate(wordBeforePoint):
     if word[0].isupper() and word[1] == ".":
         if singleLetterBeforePoint[key] == "F":
@@ -170,6 +171,34 @@ for key, word in enumerate(wordBeforePoint):
 
     else:
         inAbr.append("F")
+
+    for key, word in enumerate(wordBeforePoint):
+        wordAfter = entireWordAfterPoint[key]
+        if word[0].isdigit() and wordAfter[0].isdigit():
+            betweenTwoNrs.append("T")
+        else:
+            betweenTwoNrs.append("F")
+
+    urmSpUpCharNamePrecLowCh = []
+
+for key, word in enumerate(entireWordAfterPoint):
+    if word[0] == " ":
+        if word[1].isupper():
+            auxWord = word[1:]
+            if (auxWord in listaNume or auxWord in listaPrenume) and len(auxWord) != 1:
+                wordBefore = wordBeforePoint[key]
+                if wordBefore[-2].islower() and precPresc[key] == "F":
+                    urmSpUpCharNamePrecLowCh.append("T")
+
+                else:
+                    urmSpUpCharNamePrecLowCh.append("F")
+            else:
+                urmSpUpCharNamePrecLowCh.append("F")
+        else:
+            urmSpUpCharNamePrecLowCh.append("F")
+
+    else:
+        urmSpUpCharNamePrecLowCh.append("F")
 
 # ------------------------------ Verificare + Redactare CSV ------------------------------
 
@@ -199,12 +228,23 @@ print urmSpUpCharNoName
 print"Single Letter Before Point"
 print singleLetterBeforePoint
 
-with open('data.csv', 'wb') as csvfile:
-    fieldnames = ['inAbr', 'urmEnter', "precPresc", "urmSpUpCharNoName", "singleLetterBeforePoint", "class"]
+print("Between Two Numbers")
+print(betweenTwoNrs)
+
+print("Urm Sp Up Char No Name Prec Low Ch No Presc")
+print(urmSpUpCharNamePrecLowCh)
+
+with open('test.csv', 'w') as csvfile:
+    fieldnames = ['urmEnter', "precPresc", 'inAbr', "urmSpUpCharNoName", "singleLetterBeforePoint", "betweenTwoNrs",
+                  "urmSpUpCharNamePrecLowCh", "class"]
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     for index in range(0, nrDots):
-        writer.writerow({'urmEnter': urmEnter[index], 'precPresc': precPresc[index], 'inAbr': inAbr[index],
+        writer.writerow({'urmEnter': urmEnter[index],
+                         'precPresc': precPresc[index],
+                         'inAbr': inAbr[index],
                          "urmSpUpCharNoName": urmSpUpCharNoName[index],
                          "singleLetterBeforePoint": singleLetterBeforePoint[index],
+                         "betweenTwoNrs": betweenTwoNrs[index],
+                         "urmSpUpCharNamePrecLowCh": urmSpUpCharNamePrecLowCh[index],
                          "class": classList[index]})
